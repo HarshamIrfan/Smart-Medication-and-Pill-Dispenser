@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Adherence Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Medication Adherence Tracker</h1>
+    </header>
+    <main>
+        <section class="form-section">
+            <h2>Log Your Medication</h2>
+            <form id="medication-form">
+                <label for="medication-name">Medication Name:</label>
+                <input type="text" id="medication-name" placeholder="e.g., Paracetamol" required>
+                <label for="dose">Dose (mg):</label>
+                <input type="number" id="dose" placeholder="e.g., 500" required>
+                <label for="time">Time:</label>
+                <input type="time" id="time" required>
+                <button type="submit">Log Medication</button>
+            </form>
+        </section>
+        <section class="log-section">
+            <h2>Adherence Log</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Medication Name</th>
+                        <th>Dose (mg)</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="medication-log"></tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>Medication Adherence Tracker &copy; 2024</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
