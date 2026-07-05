@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="8" fill="#2563EB"/>
+  <!-- Pill shape: two rounded halves -->
+  <rect x="7" y="13" width="18" height="6" rx="3" fill="white" opacity="0.9"/>
+  <rect x="7" y="13" width="9" height="6" rx="3" fill="white" opacity="0.5"/>
+  <!-- Dividing line -->
+  <line x1="16" y1="13" x2="16" y2="19" stroke="#2563EB" stroke-width="1.5"/>
+</svg>

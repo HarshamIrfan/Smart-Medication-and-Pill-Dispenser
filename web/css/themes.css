@@ -1,0 +1,108 @@
+/*
+ * themes.css — Design token definitions for light and dark palettes.
+ * All other CSS files consume these variables so theme switching is a
+ * single attribute change on <html data-theme="...">
+ */
+
+:root,
+[data-theme="light"] {
+  /* Brand */
+  --color-primary:        #2563EB;
+  --color-primary-hover:  #1D4ED8;
+  --color-secondary:      #3B82F6;
+  --color-accent:         #60A5FA;
+
+  /* Semantic */
+  --color-success:  #10B981;
+  --color-warning:  #F59E0B;
+  --color-danger:   #EF4444;
+  --color-info:     #3B82F6;
+
+  /* Lighter tints (for card borders, backgrounds) */
+  --color-success-tint:  rgba(16, 185, 129, 0.10);
+  --color-warning-tint:  rgba(245, 158, 11,  0.10);
+  --color-danger-tint:   rgba(239, 68,  68,  0.10);
+  --color-primary-tint:  rgba(37,  99,  235, 0.08);
+  --color-info-tint:     rgba(59,  130, 246, 0.10);
+
+  /* Surface */
+  --color-bg:       #F8FAFC;
+  --color-bg-alt:   #F1F5F9;
+  --color-surface:  #FFFFFF;
+  --color-surface-2: #F8FAFC;
+  --color-border:   #E2E8F0;
+  --color-border-2: #CBD5E1;
+
+  /* Text */
+  --color-text:         #0F172A;
+  --color-text-2:       #475569;
+  --color-text-3:       #94A3B8;
+  --color-text-inverse: #FFFFFF;
+
+  /* Nav */
+  --nav-bg:            rgba(255, 255, 255, 0.85);
+  --nav-border:        rgba(226, 232, 240, 0.8);
+
+  /* Charts */
+  --chart-grid:    rgba(15, 23, 42, 0.06);
+  --chart-text:    #475569;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.10);
+  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.12);
+
+  /* Modal */
+  --modal-overlay-bg: rgba(15, 23, 42, 0.5);
+
+  /* Particles */
+  --particle-color: "#2563EB";
+  --particle-link-color: "#3B82F6";
+}
+
+[data-theme="dark"] {
+  --color-primary:        #3B82F6;
+  --color-primary-hover:  #60A5FA;
+  --color-secondary:      #60A5FA;
+  --color-accent:         #93C5FD;
+
+  --color-success:  #34D399;
+  --color-warning:  #FCD34D;
+  --color-danger:   #F87171;
+  --color-info:     #60A5FA;
+
+  --color-success-tint:  rgba(52,  211, 153, 0.12);
+  --color-warning-tint:  rgba(252, 211, 77,  0.12);
+  --color-danger-tint:   rgba(248, 113, 113, 0.12);
+  --color-primary-tint:  rgba(59,  130, 246, 0.12);
+  --color-info-tint:     rgba(96,  165, 250, 0.12);
+
+  --color-bg:        #0B1120;
+  --color-bg-alt:    #111827;
+  --color-surface:   #1E293B;
+  --color-surface-2: #0F172A;
+  --color-border:    #1E293B;
+  --color-border-2:  #334155;
+
+  --color-text:         #F1F5F9;
+  --color-text-2:       #94A3B8;
+  --color-text-3:       #475569;
+  --color-text-inverse: #0F172A;
+
+  --nav-bg:     rgba(11, 17, 32, 0.88);
+  --nav-border: rgba(30, 41, 59, 0.8);
+
+  --chart-grid:  rgba(241, 245, 249, 0.06);
+  --chart-text:  #94A3B8;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+  --modal-overlay-bg: rgba(0, 0, 0, 0.65);
+
+  --particle-color: "#3B82F6";
+  --particle-link-color: "#60A5FA";
+}

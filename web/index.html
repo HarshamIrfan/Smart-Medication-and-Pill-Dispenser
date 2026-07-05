@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedTrack — Smart Medication Dashboard</title>
+  <meta name="description" content="Software companion interface for an IoT-based medication dispenser prototype." />
+
+  <!-- Google Fonts: Space Grotesk + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- tsParticles -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3.3.0/tsparticles.bundle.min.js"></script>
+
+  <!-- Stylesheets (order matters for cascade) -->
+  <link rel="stylesheet" href="css/themes.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+  <!-- ===== STICKY NAV ===== -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner container">
+      <a href="#hero" class="nav__logo" aria-label="MedTrack home">
+        <span class="nav__logo-icon" aria-hidden="true">
+          <i data-lucide="pill"></i>
+        </span>
+        <span class="nav__logo-text">MedTrack</span>
+      </a>
+
+      <ul class="nav__links" role="list">
+        <li><a href="#dashboard" class="nav__link">Dashboard</a></li>
+        <li><a href="#schedule"  class="nav__link">Schedule</a></li>
+        <li><a href="#manager"   class="nav__link">Medications</a></li>
+        <li><a href="#analytics" class="nav__link">Analytics</a></li>
+        <li><a href="#calendar"  class="nav__link">Calendar</a></li>
+        <li><a href="#history"   class="nav__link">History</a></li>
+        <li><a href="#device"    class="nav__link">Device</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <!-- Theme toggle: persists to localStorage -->
+        <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <i data-lucide="moon" class="icon-moon"></i>
+          <i data-lucide="sun"  class="icon-sun"></i>
+        </button>
+        <button class="btn btn--primary btn--sm" id="nav-add-med" aria-label="Add medication">
+          <i data-lucide="plus"></i> Add Med
+        </button>
+        <!-- Hamburger for mobile -->
+        <button class="btn-icon nav__hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="nav__mobile-drawer" id="nav-mobile-drawer" aria-hidden="true">
+      <ul class="nav__mobile-links" role="list">
+        <li><a href="#dashboard" class="nav__link">Dashboard</a></li>
+        <li><a href="#schedule"  class="nav__link">Schedule</a></li>
+        <li><a href="#manager"   class="nav__link">Medications</a></li>
+        <li><a href="#analytics" class="nav__link">Analytics</a></li>
+        <li><a href="#calendar"  class="nav__link">Calendar</a></li>
+        <li><a href="#history"   class="nav__link">History</a></li>
+        <li><a href="#device"    class="nav__link">Device</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero" aria-label="Introduction">
+    <!-- tsParticles canvas lives here -->
+    <div id="particles-canvas" aria-hidden="true"></div>
+
+    <div class="hero__content container">
+      <span class="hero__eyebrow">Academic Prototype · ESP32 · IoT</span>
+      <h1 class="hero__title">
+        <span class="hero__title-line" id="hero-title-1">Smart Medication</span>
+        <span class="hero__title-line hero__title-line--accent" id="hero-title-2">Adherence Dashboard</span>
+      </h1>
+      <p class="hero__subtitle">
+        Software companion interface for an IoT-based medication dispenser prototype.
+        Schedule, track, and visualise adherence — no backend required.
+      </p>
+      <div class="hero__ctas">
+        <a href="#dashboard" class="btn btn--primary btn--lg">
+          <i data-lucide="layout-dashboard"></i> View Dashboard
+        </a>
+        <a href="#manager" class="btn btn--ghost btn--lg">
+          <i data-lucide="plus-circle"></i> Add Medication
+        </a>
+      </div>
+
+      <!-- Live clock — grounds the prototype in real time -->
+      <div class="hero__clock" id="hero-clock" aria-label="Current time">
+        <i data-lucide="clock" aria-hidden="true"></i>
+        <span id="hero-time">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- Decorative gradient orbs -->
+    <div class="hero__orb hero__orb--1" aria-hidden="true"></div>
+    <div class="hero__orb hero__orb--2" aria-hidden="true"></div>
+  </section>
+
+  <!-- ===== DASHBOARD OVERVIEW ===== -->
+  <section class="section" id="dashboard" aria-labelledby="dashboard-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Overview</p>
+          <h2 class="section__title" id="dashboard-heading">Today at a Glance</h2>
+        </div>
+        <p class="section__date" id="today-date"></p>
+      </div>
+
+      <!-- Animated stat cards -->
+      <div class="stat-grid" role="list">
+        <div class="stat-card stat-card--primary" role="listitem" aria-label="Next dose information">
+          <div class="stat-card__icon"><i data-lucide="alarm-clock"></i></div>
+          <div class="stat-card__body">
+            <p class="stat-card__label">Next Dose</p>
+            <p class="stat-card__value" id="stat-next-dose">—</p>
+            <p class="stat-card__sub"  id="stat-next-med">No upcoming doses</p>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--info" role="listitem" aria-label="Today's medication count">
+          <div class="stat-card__icon"><i data-lucide="pill"></i></div>
+          <div class="stat-card__body">
+            <p class="stat-card__label">Today's Medications</p>
+            <p class="stat-card__value" id="stat-total-today">0</p>
+            <p class="stat-card__sub">scheduled doses</p>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--success" role="listitem" aria-label="Taken today count">
+          <div class="stat-card__icon"><i data-lucide="check-circle-2"></i></div>
+          <div class="stat-card__body">
+            <p class="stat-card__label">Taken Today</p>
+            <p class="stat-card__value counter" id="stat-taken-today" data-target="0">0</p>
+            <p class="stat-card__sub">doses confirmed</p>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--warning" role="listitem" aria-label="7-day adherence rate">
+          <div class="stat-card__icon"><i data-lucide="trending-up"></i></div>
+          <div class="stat-card__body">
+            <p class="stat-card__label">7-Day Adherence</p>
+            <p class="stat-card__value counter" id="stat-adherence" data-target="0">0%</p>
+            <p class="stat-card__sub">of scheduled doses taken</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MEDICATION SCHEDULE ===== -->
+  <section class="section section--alt" id="schedule" aria-labelledby="schedule-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Daily View</p>
+          <h2 class="section__title" id="schedule-heading">Today's Schedule</h2>
+        </div>
+        <div class="section__actions">
+          <button class="btn btn--secondary btn--sm" id="reset-today-btn" aria-label="Reset all today's statuses to pending">
+            <i data-lucide="rotate-ccw"></i> Reset Day
+          </button>
+        </div>
+      </div>
+
+      <!-- The signature element: a vertical time-rail with live cursor -->
+      <div class="schedule-layout">
+        <div class="time-rail" aria-hidden="true">
+          <div class="time-rail__track">
+            <div class="time-rail__cursor" id="time-cursor"></div>
+          </div>
+          <div class="time-rail__labels">
+            <span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span>
+          </div>
+        </div>
+
+        <div class="schedule-columns">
+          <!-- Morning -->
+          <div class="schedule-period" id="period-morning">
+            <div class="schedule-period__header">
+              <i data-lucide="sunrise" aria-hidden="true"></i>
+              <h3>Morning</h3>
+              <span class="schedule-period__time">6 AM – 12 PM</span>
+            </div>
+            <div class="schedule-period__items" id="morning-items" role="list">
+              <!-- Populated by schedule.js -->
+            </div>
+          </div>
+
+          <!-- Afternoon -->
+          <div class="schedule-period" id="period-afternoon">
+            <div class="schedule-period__header">
+              <i data-lucide="sun" aria-hidden="true"></i>
+              <h3>Afternoon</h3>
+              <span class="schedule-period__time">12 PM – 6 PM</span>
+            </div>
+            <div class="schedule-period__items" id="afternoon-items" role="list">
+            </div>
+          </div>
+
+          <!-- Evening -->
+          <div class="schedule-period" id="period-evening">
+            <div class="schedule-period__header">
+              <i data-lucide="sunset" aria-hidden="true"></i>
+              <h3>Evening</h3>
+              <span class="schedule-period__time">6 PM – 12 AM</span>
+            </div>
+            <div class="schedule-period__items" id="evening-items" role="list">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state shown when no meds exist -->
+      <div class="empty-state" id="schedule-empty" hidden>
+        <i data-lucide="calendar-x" aria-hidden="true"></i>
+        <h3>No medications scheduled</h3>
+        <p>Add a medication to see today's schedule here.</p>
+        <button class="btn btn--primary" id="schedule-add-btn">
+          <i data-lucide="plus"></i> Add Medication
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MEDICATION MANAGER ===== -->
+  <section class="section" id="manager" aria-labelledby="manager-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Management</p>
+          <h2 class="section__title" id="manager-heading">Medication Library</h2>
+        </div>
+        <button class="btn btn--primary" id="open-add-modal" aria-haspopup="dialog">
+          <i data-lucide="plus"></i> Add Medication
+        </button>
+      </div>
+
+      <!-- Search + filter bar -->
+      <div class="filter-bar" role="search">
+        <div class="search-input-wrap">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input
+            type="search"
+            id="med-search"
+            class="search-input"
+            placeholder="Search medications…"
+            aria-label="Search medications"
+          />
+        </div>
+        <select class="select" id="med-filter-freq" aria-label="Filter by frequency">
+          <option value="">All frequencies</option>
+          <option value="once-daily">Once daily</option>
+          <option value="twice-daily">Twice daily</option>
+          <option value="three-times-daily">Three times daily</option>
+          <option value="as-needed">As needed</option>
+          <option value="weekly">Weekly</option>
+        </select>
+        <select class="select" id="med-sort" aria-label="Sort medications">
+          <option value="name-asc">Name A–Z</option>
+          <option value="name-desc">Name Z–A</option>
+          <option value="time-asc">Time (earliest)</option>
+          <option value="time-desc">Time (latest)</option>
+        </select>
+      </div>
+
+      <!-- Medication cards grid -->
+      <div class="med-grid" id="med-grid" role="list" aria-label="Medication list">
+        <!-- Populated by medication.js -->
+      </div>
+
+      <div class="empty-state" id="manager-empty" hidden>
+        <i data-lucide="pill" aria-hidden="true"></i>
+        <h3>No medications yet</h3>
+        <p>Add your first medication to get started.</p>
+        <button class="btn btn--primary" id="manager-add-btn">
+          <i data-lucide="plus"></i> Add Medication
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ANALYTICS ===== -->
+  <section class="section section--alt" id="analytics" aria-labelledby="analytics-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Insights</p>
+          <h2 class="section__title" id="analytics-heading">Adherence Analytics</h2>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card chart-card--wide">
+          <h3 class="chart-card__title">Weekly Adherence Rate</h3>
+          <p class="chart-card__sub">% of scheduled doses taken per day</p>
+          <div class="chart-card__canvas-wrap">
+            <canvas id="chart-weekly" aria-label="Weekly adherence bar chart" role="img"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3 class="chart-card__title">Taken vs Missed</h3>
+          <p class="chart-card__sub">All-time totals</p>
+          <div class="chart-card__canvas-wrap chart-card__canvas-wrap--sm">
+            <canvas id="chart-doughnut" aria-label="Taken vs missed doughnut chart" role="img"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3 class="chart-card__title">Medication Distribution</h3>
+          <p class="chart-card__sub">Doses per medication (7 days)</p>
+          <div class="chart-card__canvas-wrap chart-card__canvas-wrap--sm">
+            <canvas id="chart-distribution" aria-label="Medication distribution chart" role="img"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card chart-card--wide">
+          <h3 class="chart-card__title">Daily Completion</h3>
+          <p class="chart-card__sub">Taken vs missed per day this week</p>
+          <div class="chart-card__canvas-wrap">
+            <canvas id="chart-daily" aria-label="Daily completion stacked bar chart" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CALENDAR ===== -->
+  <section class="section" id="calendar" aria-labelledby="calendar-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Monthly View</p>
+          <h2 class="section__title" id="calendar-heading">Medication Calendar</h2>
+        </div>
+        <div class="calendar-nav" role="group" aria-label="Calendar navigation">
+          <button class="btn-icon" id="cal-prev" aria-label="Previous month">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <span class="calendar-nav__month" id="cal-month-label"></span>
+          <button class="btn-icon" id="cal-next" aria-label="Next month">
+            <i data-lucide="chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="calendar-legend" role="list" aria-label="Calendar legend">
+        <span class="legend-item legend-item--taken" role="listitem">Taken</span>
+        <span class="legend-item legend-item--missed" role="listitem">Missed</span>
+        <span class="legend-item legend-item--pending" role="listitem">Pending</span>
+      </div>
+
+      <div class="calendar-grid" id="calendar-grid" role="grid" aria-label="Monthly calendar"></div>
+    </div>
+  </section>
+
+  <!-- ===== HISTORY ===== -->
+  <section class="section section--alt" id="history" aria-labelledby="history-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Audit Log</p>
+          <h2 class="section__title" id="history-heading">Dose History</h2>
+        </div>
+        <button class="btn btn--danger btn--sm" id="clear-history-btn" aria-label="Clear all history">
+          <i data-lucide="trash-2"></i> Clear History
+        </button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input
+            type="search"
+            id="history-search"
+            class="search-input"
+            placeholder="Search history…"
+            aria-label="Search dose history"
+          />
+        </div>
+        <select class="select" id="history-filter-status" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="taken">Taken</option>
+          <option value="missed">Missed</option>
+        </select>
+        <select class="select" id="history-sort" aria-label="Sort history">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+
+      <div class="table-wrap" role="region" aria-label="Dose history table" tabindex="0">
+        <table class="data-table" id="history-table" aria-label="Dose history">
+          <thead>
+            <tr>
+              <th scope="col">Medication</th>
+              <th scope="col">Dosage</th>
+              <th scope="col">Scheduled Time</th>
+              <th scope="col">Recorded At</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Populated by history rendering -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="history-empty" hidden>
+        <i data-lucide="clock-4" aria-hidden="true"></i>
+        <h3>No history yet</h3>
+        <p>Mark doses as taken or missed from the schedule to log them here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DEVICE INFO ===== -->
+  <section class="section" id="device" aria-labelledby="device-heading">
+    <div class="container">
+      <div class="section__header">
+        <div>
+          <p class="section__eyebrow">Hardware Reference</p>
+          <h2 class="section__title" id="device-heading">Prototype Specification</h2>
+        </div>
+        <span class="badge badge--warning">
+          <i data-lucide="alert-triangle" aria-hidden="true"></i>
+          Prototype Reference — No Live Hardware
+        </span>
+      </div>
+
+      <div class="device-notice">
+        <i data-lucide="info" aria-hidden="true"></i>
+        <p>
+          The physical hardware prototype is no longer available. This panel documents the components used during
+          development. No live telemetry is displayed — all values here are static reference data.
+        </p>
+      </div>
+
+      <div class="device-grid">
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="cpu"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">ESP32</p>
+            <p class="device-card__role">Microcontroller</p>
+            <p class="device-card__detail">Dual-core Xtensa LX6, 240 MHz, Wi-Fi + BLE</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="clock"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">DS3231 RTC</p>
+            <p class="device-card__role">Real-Time Clock</p>
+            <p class="device-card__detail">I²C interface, ±2 ppm accuracy, battery backup</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="settings"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">Servo Motor</p>
+            <p class="device-card__role">Dispenser Actuator</p>
+            <p class="device-card__detail">SG90 micro servo, PWM control, 180° range</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="radio"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">IR Sensor</p>
+            <p class="device-card__role">Dispense Detection</p>
+            <p class="device-card__detail">Infrared proximity, confirms pill ejection</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="monitor"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">16×2 LCD</p>
+            <p class="device-card__role">On-device Display</p>
+            <p class="device-card__detail">I²C backpack, displays schedule and status</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="grid-3x3"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">4×4 Keypad</p>
+            <p class="device-card__role">User Input</p>
+            <p class="device-card__detail">Membrane matrix keypad for schedule entry</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="volume-2"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">Buzzer</p>
+            <p class="device-card__role">Dose Alert</p>
+            <p class="device-card__detail">Passive piezo, tones for dose reminders</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+
+        <div class="device-card">
+          <div class="device-card__icon"><i data-lucide="code-2"></i></div>
+          <div class="device-card__body">
+            <p class="device-card__name">Firmware</p>
+            <p class="device-card__role">Arduino C++ · ESP-IDF</p>
+            <p class="device-card__detail">Scheduled dispense, keypad config, BLE sync</p>
+          </div>
+          <span class="badge badge--secondary">Ref</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section section--alt" id="about" aria-labelledby="about-heading">
+    <div class="container container--narrow">
+      <p class="section__eyebrow">Academic Project</p>
+      <h2 class="section__title" id="about-heading">About This Dashboard</h2>
+      <div class="about-body">
+        <p>
+          This dashboard is the software companion to an undergraduate embedded systems mini project —
+          a <strong>Smart Medication Dispenser & Adherence Tracker</strong> built on the ESP32 platform.
+        </p>
+        <p>
+          MedTrack is a browser-based medication management dashboard built to accompany a smart
+          medication dispenser prototype developed as an academic project.
+        </p>
+        <p>
+          This interface demonstrates how a companion web application can support medication scheduling,
+          adherence tracking, data visualisation, and historical records beyond the capabilities of a
+          constrained embedded display.
+        </p>
+        <p>
+          No live hardware is connected. All data is stored locally in your browser via
+          <code>localStorage</code>. Nothing is transmitted to any server, and clearing browser
+          storage will reset the application.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__inner">
+        <div class="footer__brand">
+          <span class="nav__logo-icon" aria-hidden="true"><i data-lucide="pill"></i></span>
+          <span>MedTrack</span>
+        </div>
+        <div class="footer__credit">
+          <p class="footer__designed-by">Designed &amp; Developed by</p>
+          <a href="https://www.linkedin.com/in/harsham-irfan-bhat/" target="_blank"
+             rel="noopener noreferrer" class="footer__author-link" aria-label="Harsham Irfan Bhat on LinkedIn">
+            Harsham Irfan Bhat
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px;vertical-align:middle;"></i>
+          </a>
+          <div class="footer__socials">
+            <a href="https://github.com/HarshamIrfan" target="_blank" rel="noopener noreferrer"
+               class="btn-icon" aria-label="GitHub profile" title="GitHub">
+              <i data-lucide="github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/harsham-irfan-bhat/" target="_blank" rel="noopener noreferrer"
+               class="btn-icon" aria-label="LinkedIn profile" title="LinkedIn">
+              <i data-lucide="linkedin"></i>
+            </a>
+          </div>
+        </div>
+        <p class="footer__copy">&copy; <span id="footer-year"></span> Harsham Irfan Bhat. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== MEDICATION MODAL ===== -->
+  <div class="modal-overlay" id="med-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal" id="med-modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-title">Add Medication</h2>
+        <button class="btn-icon modal__close" id="modal-close" aria-label="Close dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label" for="field-name">Medication name <span aria-hidden="true">*</span></label>
+          <input type="text" id="field-name" class="form-input" placeholder="e.g. Metformin" required autocomplete="off" />
+          <p class="form-error" id="error-name" role="alert" hidden></p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="field-dosage">Dosage <span aria-hidden="true">*</span></label>
+            <input type="text" id="field-dosage" class="form-input" placeholder="e.g. 500 mg" required />
+            <p class="form-error" id="error-dosage" role="alert" hidden></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="field-time">Time <span aria-hidden="true">*</span></label>
+            <input type="time" id="field-time" class="form-input" required />
+            <p class="form-error" id="error-time" role="alert" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-frequency">Frequency</label>
+          <select id="field-frequency" class="select form-input">
+            <option value="once-daily">Once daily</option>
+            <option value="twice-daily">Twice daily</option>
+            <option value="three-times-daily">Three times daily</option>
+            <option value="as-needed">As needed</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="field-notes">Notes</label>
+          <textarea id="field-notes" class="form-input form-textarea" placeholder="e.g. Take with food" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn btn--secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn--primary" id="modal-save">
+          <i data-lucide="save"></i> Save Medication
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIRMATION DIALOG ===== -->
+  <div class="modal-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title" hidden>
+    <div class="modal modal--sm" id="confirm-modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="confirm-title">Confirm Action</h2>
+      </div>
+      <div class="modal__body">
+        <p id="confirm-message"></p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary" id="confirm-cancel">Cancel</button>
+        <button class="btn btn--danger"    id="confirm-ok">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS (modules loaded in dependency order) ===== -->
+  <script src="js/storage.js"></script>
+  <script src="js/medication.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
