@@ -1,5 +1,9 @@
 <p align="center">
+<<<<<<< HEAD
   <img src="assets\logo.png" alt="Smart Medication Dispenser Logo" width="120">
+=======
+  <img src="web/favicon.svg" alt="Smart Medication Dispenser Logo" width="100">
+>>>>>>> bc4b01455d05dd52f26d3fcd8b013d5caf99fce0
 </p>
 
 <h1 align="center">Smart Medication Dispenser & Adherence Tracker</h1>
