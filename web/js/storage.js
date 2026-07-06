@@ -9,10 +9,10 @@
 
 const Storage = (() => {
   const KEYS = {
-    MEDICATIONS: 'medtrack_medications',
-    DOSE_LOG:    'medtrack_dose_log',
-    TODAY_STATE: 'medtrack_today_state',
-    THEME:       'medtrack_theme',
+    MEDICATIONS: 'MedAd_medications',
+    DOSE_LOG:    'MedAd_dose_log',
+    TODAY_STATE: 'MedAd_today_state',
+    THEME:       'MedAd_theme',
   };
 
   /** Read and parse a key; return fallback if missing or malformed. */
@@ -31,7 +31,7 @@ const Storage = (() => {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch {
-      console.warn('[MedTrack] localStorage write failed — storage may be full.');
+      console.warn('[MedAd] localStorage write failed — storage may be full.');
       return false;
     }
   }

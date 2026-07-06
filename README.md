@@ -70,16 +70,11 @@ The repository represents two stages of development. The embedded hardware and f
 
 # Why This Project?
 
-Medication reminder hardware often provides only a small display and limited interaction.
+Managing medications on a fixed schedule can be difficult, particularly for users taking multiple prescriptions throughout the day.
 
-A companion browser dashboard can significantly improve the overall user experience without changing the embedded hardware itself by providing:
+The embedded prototype addresses this by allowing medication times to be configured directly on the device using the keypad. The ESP32 continuously monitors the schedule using an RTC module and automatically dispenses medication at the configured time while providing visual and audible reminders.
 
-- Medication management
-- Schedule planning
-- Calendar visualization
-- Medication history
-- Adherence analytics
-- Better accessibility across devices
+While the hardware provides the core dispensing functionality, its on-device interface is naturally limited. A companion dashboard can extend the experience by offering medication management, calendar planning, history, and adherence analytics without changing the embedded hardware itself.
 
 | Capability | Embedded Prototype | Modern Dashboard |
 |------------|:-----------------:|:----------------:|
